@@ -68,6 +68,10 @@ export default {
       if (newRoom) {
         this.allRoom.unshift(newRoom);
       }
+
+      while (this.allRoom.length > 7) {
+        this.allRoom.pop();
+      }
     };
   },
   methods: {
