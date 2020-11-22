@@ -1,18 +1,11 @@
 <template>
-  <div class="home">
-    <h1>Hello World</h1>
-    <button @click="openConnection">Open Connection</button>
-  </div>
+  <h1>Room {{ $route.params.id }}</h1>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
-
 export default {
-  name: 'Home',
+  name: 'Room',
   components: {
-    // HelloWorld,
   },
   created() {
     console.log('WebSocket is connected.');
@@ -23,7 +16,7 @@ export default {
       const subscribeMsg = {
         command: 'subscribe',
         identifier: JSON.stringify({
-          id: 1,
+          id: this.$route.params.id,
           channel: 'RoomChannel',
         }),
       };
@@ -46,3 +39,7 @@ export default {
   },
 };
 </script>
+
+<style>
+
+</style>
