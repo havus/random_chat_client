@@ -21,7 +21,7 @@
             class="d-flex row align-items-center"
           >
             <p class="m-0">{{ room.attributes.name }}</p>
-            <b-button variant="primary" class="ml-auto">Join</b-button>
+            <b-button variant="primary" class="ml-auto" :to="'/room/' + room.id">Join</b-button>
           </b-list-group-item>
         </b-list-group>
       </b-col>
@@ -42,9 +42,8 @@ export default {
   async created() {
     this.allRoom = await this.getRooms();
 
-    console.log('WebSocket is connected.');
-
     const socket = new WebSocket('ws://localhost:3000/cable');
+    console.log('WebSocket is connected.');
 
     socket.onopen = () => {
       const subscribeMsg = {
