@@ -10,12 +10,17 @@
         <b-form-input id="create-new-message" type="text" v-model="newMessage"></b-form-input>
       </b-col>
       <b-col sm="2">
-        <b-button variant="primary" @click="createNewMessage">Post</b-button>
+        <b-button variant="primary" @click="createNewMessage" :disabled="isLoading">
+          <b-spinner v-if="isLoading" small type="grow"></b-spinner>
+          <span>Post</span>
+        </b-button>
       </b-col>
     </b-row>
 
     <b-row class="mt-5">
       <b-col sm="12" md="6">
+        <b-spinner v-if="isLoading" variant="primary" label="Spinning"></b-spinner>
+
         <b-list-group class="mt-5">
           <b-list-group-item
             v-for="(message, i) in allMessages"
@@ -47,8 +52,10 @@ export default {
   data: () => ({
     newMessage: '',
     allMessages: [],
+    isLoading: false,
   }),
   async created() {
+    this.isLoading = true;
     this.allMessages = await this.getMessagesFromRoom(this.roomId);
 
     const socket = new WebSocket('ws://localhost:3000/cable');
@@ -78,9 +85,13 @@ export default {
         this.allMessages.unshift(newMessage);
       }
     };
+
+    this.isLoading = false;
   },
   methods: {
     async createNewMessage() {
+      this.isLoading = true;
+
       if (!this.newMessage) {
         return;
       }
@@ -94,6 +105,8 @@ export default {
       if (!response.errors) {
         this.newMessage = '';
       }
+
+      this.isLoading = false;
     },
   },
 };

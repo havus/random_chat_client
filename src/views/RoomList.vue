@@ -8,12 +8,17 @@
         <b-form-input id="create-new-room" type="text" v-model="newRoomName"></b-form-input>
       </b-col>
       <b-col sm="2">
-        <b-button variant="primary" @click="createNewRoom">Create New Room</b-button>
+        <b-button variant="primary" @click="createNewRoom" :disabled="isLoading">
+          <b-spinner v-if="isLoading" small type="grow"></b-spinner>
+          <span>Create New Room</span>
+        </b-button>
       </b-col>
     </b-row>
 
     <b-row class="mt-5">
       <b-col sm="12" md="6">
+        <b-spinner v-if="isLoading" variant="primary" label="Spinning"></b-spinner>
+
         <b-list-group class="mt-5">
           <b-list-group-item
             v-for="(room, i) in allRoom"
@@ -38,8 +43,10 @@ export default {
   data: () => ({
     newRoomName: '',
     allRoom: [],
+    isLoading: false,
   }),
   async created() {
+    this.isLoading = true;
     this.allRoom = await this.getRooms();
 
     const socket = new WebSocket('ws://localhost:3000/cable');
@@ -72,14 +79,20 @@ export default {
         this.allRoom.pop();
       }
     };
+
+    this.isLoading = false;
   },
   methods: {
     async createNewRoom() {
+      this.isLoading = true;
+
       const response = await this.submitData('rooms', { name: this.newRoomName });
 
       if (!response.errors) {
         this.newRoomName = '';
       }
+
+      this.isLoading = false;
     },
   },
 };
